@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Infra\Repository;
 
-use Domain\Entity\UserEntity;
 use Domain\Repository\UserRepositoryInterface;
 use Domain\ValueObject\Username;
 use Domain\ValueObject\Email;
@@ -106,30 +105,37 @@ final class UserRepository implements UserRepositoryInterface
    */
   public function update(
     string $id,
-    Username $username,
-    Email $email,
-    Password $password,
-    Phone $phone
+    Username $username = null,
+    Email $email = null,
+    Password $password = null,
+    Phone $phone = null
   ): void
   {
+    $fieldsUpdate = [];
+    $fieldsUpdate[] = $username ? " username = :username " : "";
+    $fieldsUpdate[] = $email ? " email = :email " : "";
+    $fieldsUpdate[] = $password ? "password = :password" : "";
+    $fieldsUpdate[] = $phone ? "phone = :phone" : "";
+
+    $fields = join(',', $fieldsUpdate);
+
+    $fieldsBind = array_merge(
+      [':id' => $id],
+      ($username ? [':username' => $username->value()] : []),
+      ($email ? [':email' => $email->value()] : []),
+      ($password ? [':password' => $password->value()] : []),
+      ($phone ? [':phone' => $phone->value()] : [])
+    );
+
     $sql = $this->conn->prepare(
       "UPDATE 
           user 
         SET
-          username = :username,
-          email = :email,
-          password = :password,
-          phone = :phone
+          {$fields}
         WHERE
           id = :id"
     );
-    $sql->execute([
-      ':username' => $username->value(),
-      ':email' => $email->value(),
-      ':password' => $password->value(),
-      ':phone' => $phone->value(),
-      ':id' => $id
-    ]);
+    $sql->execute($fieldsBind);
   }
 
   /**

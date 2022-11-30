@@ -8,6 +8,7 @@ use Domain\UseCase\CreateUser;
 use Domain\UseCase\DeleteUser;
 use Domain\UseCase\ListUser;
 use Domain\UseCase\ListUsers;
+use Domain\UseCase\UpdateUser;
 use Domain\ValueObject\Email;
 use Domain\ValueObject\Password;
 use Domain\ValueObject\Phone;
@@ -15,18 +16,15 @@ use Domain\ValueObject\Username;
 use Exception;
 use Infra\Adapter\MariadbAdapter;
 use Infra\Repository\UserRepository;
+use Presentation\Http\Core\Controller;
 
-final class UserController
+
+final class UserController extends Controller
 {
   private UserRepository $userRepository;
   public function __construct()
   {
-    $adapter = new MariadbAdapter(
-      DB_HOST,
-      DB_NAME,
-      DB_USERNAME,
-      DB_PASSWORD
-    );
+    $adapter = new MariadbAdapter();
     $this->userRepository = new UserRepository($adapter->conn());
   }
 
@@ -51,8 +49,7 @@ final class UserController
     array $request
   ): void
   {
-    $request = json_decode(file_get_contents("php://input"));
-
+    $request = self::request($request);
     $id = uniqid();
 
     $createUser = new CreateUser($this->userRepository);
@@ -60,15 +57,43 @@ final class UserController
     try {
       $createUser->action(
         $id,
-        new Username($request->username),
-        new Email($request->email),
-        new Password($request->password),
-        new Phone($request->phone)
+        new Username($request['username']),
+        new Email($request['email']),
+        new Password($request['password']),
+        new Phone($request['phone'])
       );
     } catch (Exception $th) {
       http_response_code(400);
       echo json_encode(['msg' => $th->getMessage()]);
     }
+  }
+
+  public function update(
+    array $request
+  ): void
+  {
+
+    $request = json_decode(file_get_contents("php://input"));
+
+    $username = $request->username ? new Username($request->username) : null;
+    $email = $request->email ? new Email($request->email) : null;
+    $password = $request->password ? new Password($request->password) : null;
+    $phone = $request->phone ? new Phone($request->phone) : null;
+
+    $updateUser = new UpdateUser($this->userRepository);
+    try {
+      $updateUser->action(
+        $request->id,
+        $username,
+        $email,
+        $password,
+        $phone
+      );
+    } catch (\Throwable $th) {
+      http_response_code(400);
+      echo json_encode(['msg' => $th->getMessage()]);
+    }
+
   }
 
   public function delete(

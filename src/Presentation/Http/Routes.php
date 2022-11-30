@@ -20,6 +20,7 @@ final class Routes
     $router->get('/', 'UserController:listUsers');
     $router->get('/{id}', 'UserController:listUser');
     $router->post('/', 'UserController:save');
+    $router->put('/', 'UserController:update');
     $router->delete('/', 'UserController:delete');
 
     $router->dispatch();

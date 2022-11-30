@@ -11,13 +11,14 @@ use PDO;
 final class MariadbAdapter implements DbContractInterface
 {
   private PDO $conn;
-  public function __construct(
-    private string $dbHost,
-    private string $dbName,
-    private string $dbUserName,
-    private string $dbPassword
-  )
+
+
+  public function __construct()
   {
+    $dbHost = DB_HOST;
+    $dbName = DB_NAME;
+    $dbUserName = DB_USERNAME;
+    $dbPassword = DB_PASSWORD;
     try {
       $conn = new PDO(
         "mysql:host={$dbHost};dbname={$dbName}",
