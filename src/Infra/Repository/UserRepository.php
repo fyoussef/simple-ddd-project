@@ -33,7 +33,9 @@ final class UserRepository implements UserRepositoryInterface
         email,
         phone 
       FROM 
-        user"
+        user
+      ORDER BY
+        username"
     );
     $sql->execute();
     $users = $sql->fetchAll(PDO::FETCH_OBJ);

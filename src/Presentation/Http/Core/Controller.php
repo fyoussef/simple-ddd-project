@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Presentation\Http\Core;
 
+use League\Plates\Engine;
+
 class Controller
 {
   public function request(
@@ -18,6 +20,7 @@ class Controller
     array $data = []
   )
   {
-
+    $templates = new Engine(__DIR__ . '/../View');
+    echo $templates->render($name, $data);
   }
 }

@@ -23,6 +23,10 @@ final class Routes
     $router->put('/', 'UserController:update');
     $router->delete('/', 'UserController:delete');
 
+    // users views
+    $router->group('/view');
+    $router->get('/', 'UserController:viewUser');
+
     $router->dispatch();
   }
 }

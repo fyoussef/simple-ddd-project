@@ -11,6 +11,10 @@ class ComposerStaticInitae10a290b97e807ad6c712b0278dfd4a
         array (
             'Presentation\\' => 13,
         ),
+        'L' => 
+        array (
+            'League\\Plates\\' => 14,
+        ),
         'I' => 
         array (
             'Infra\\' => 6,
@@ -29,6 +33,10 @@ class ComposerStaticInitae10a290b97e807ad6c712b0278dfd4a
         'Presentation\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/Presentation',
+        ),
+        'League\\Plates\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/plates/src',
         ),
         'Infra\\' => 
         array (

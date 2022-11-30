@@ -111,4 +111,17 @@ final class UserController extends Controller
       echo json_encode(['msg' => $th->getMessage()]);
     }
   }
+
+  public function viewUser()
+  {
+    $users = new ListUsers($this->userRepository);
+    $users = $users->action();
+    self::render(
+      'user',
+      [
+        'users' => $users,
+        'name' => 'fyoussef'
+      ]
+    );
+  }
 }
