@@ -11,3 +11,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Enable apache modules
 RUN a2enmod rewrite headers && a2enmod rewrite
+
+RUN mkdir -p /var/env
+RUN printenv > .env
+RUN sed -i -e 's/=/="/' -e 's/$/"/' .env

@@ -26,6 +26,7 @@ final class Routes
     // users views
     $router->group('/view');
     $router->get('/', 'UserController:viewUser');
+    $router->get('/form', 'UserController:viewForm');
 
     $router->dispatch();
   }

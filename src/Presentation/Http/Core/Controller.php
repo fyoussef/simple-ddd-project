@@ -21,6 +21,7 @@ class Controller
   )
   {
     $templates = new Engine(__DIR__ . '/../View');
+    $templates->addData(['base_url' => DOMAIN]);
     echo $templates->render($name, $data);
   }
 }

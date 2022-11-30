@@ -46,10 +46,13 @@ final class UserController extends Controller
   }
 
   public function save(
-    array $request
+    $request
   ): void
   {
-    $request = self::request($request);
+    // case this request is not an array (json)
+    if (!is_array($request)) {
+      $request = self::request($request);
+    }
     $id = uniqid();
 
     $createUser = new CreateUser($this->userRepository);
@@ -62,6 +65,11 @@ final class UserController extends Controller
         new Password($request['password']),
         new Phone($request['phone'])
       );
+      if (is_string($request)) {
+        echo json_encode(['msg' => 'User created']);
+      } else {
+        header('location:' . DOMAIN . 'view/form?success');
+      }
     } catch (Exception $th) {
       http_response_code(400);
       echo json_encode(['msg' => $th->getMessage()]);
@@ -120,6 +128,17 @@ final class UserController extends Controller
       'user',
       [
         'users' => $users,
+        'name' => 'fyoussef'
+      ]
+    );
+  }
+
+  public function viewForm()
+  {
+    self::render(
+      'form',
+      [
+        'base_url' => DOMAIN,
         'name' => 'fyoussef'
       ]
     );
