@@ -9,4 +9,5 @@ return array(
     'Presentation\\' => array($baseDir . '/src/Presentation'),
     'Infra\\' => array($baseDir . '/src/Infra'),
     'Domain\\' => array($baseDir . '/src/Domain'),
+    'CoffeeCode\\Router\\' => array($vendorDir . '/coffeecode/router/src'),
 );

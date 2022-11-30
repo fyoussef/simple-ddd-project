@@ -13,8 +13,8 @@ final class Phone
   )
   {
     # Validate if phone number contain only numbers
-    if (!is_numeric($phone)) {
-      throw new Exception("Phone should contain only numbers");
+    if (strlen($phone) < 3) {
+      throw new Exception("Phone should have more than 3 digits");
     }
     $this->phone = $phone;
   }

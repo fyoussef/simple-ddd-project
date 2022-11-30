@@ -5,5 +5,8 @@
       "Infra\\": "src/Infra/",
       "Presentation\\": "src/Presentation/"
     }
+  },
+  "require": {
+    "coffeecode/router": "^2.0"
   }
 }

@@ -12,7 +12,8 @@ use Domain\ValueObject\Username;
 
 interface UserRepositoryInterface
 {
-  public function get(string $id): UserEntity;
+  public function listUsers(): array;
+  public function listUser(string $id): object;
   public function save(
     string $id,
     Username $username,
@@ -20,6 +21,12 @@ interface UserRepositoryInterface
     Password $password,
     Phone $phone
   ): void;
-  public function update(string $id): void;
+  public function update(
+    string $id,
+    Username $username,
+    Email $email,
+    Password $password,
+    Phone $phone
+  ): void;
   public function delete(string $id): void;
 }

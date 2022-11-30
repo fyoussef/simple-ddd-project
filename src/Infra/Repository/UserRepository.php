@@ -9,6 +9,7 @@ use Domain\ValueObject\Username;
 use Domain\ValueObject\Email;
 use Domain\ValueObject\Password;
 use Domain\ValueObject\Phone;
+use Exception;
 use PDO;
 
 final class UserRepository implements UserRepositoryInterface
@@ -22,29 +23,45 @@ final class UserRepository implements UserRepositoryInterface
   }
 
   /**
-   * Get will return an user by id
-   * @return UserEntity
+   * @return array
    */
-  public function get(string $id): UserEntity
+  public function listUsers(): array
   {
     $sql = $this->conn->prepare(
-      "SELECT * FROM user WHERE id = :id"
+      "SELECT 
+        id,
+        username,
+        email,
+        phone 
+      FROM 
+        user"
+    );
+    $sql->execute();
+    $users = $sql->fetchAll(PDO::FETCH_OBJ);
+    return $users;
+  }
+
+  /**
+   * Get will return an user by id
+   * @return object
+   */
+  public function listUser(string $id): object
+  {
+    $sql = $this->conn->prepare(
+      "SELECT 
+        id,
+        username,
+        email,
+        phone  
+      FROM 
+        user 
+      WHERE 
+        id = :id"
     );
     $sql->execute([
       ':id' => $id
     ]);
-    $data = $sql->fetch(PDO::FETCH_OBJ);
-    $username = new Username($data->username);
-    $email = new Email($data->email);
-    $password = new Password($data->password);
-    $phone = new Phone($data->phone);
-    $user = new UserEntity(
-      $data->id,
-      $username,
-      $email,
-      $password,
-      $phone
-    );
+    $user = $sql->fetch(PDO::FETCH_OBJ);
     return $user;
   }
   /**
@@ -73,7 +90,7 @@ final class UserRepository implements UserRepositoryInterface
     $sql->execute([
       ':id' => $id,
       ':username' => $username->value(),
-      ':email' => $username->value(),
+      ':email' => $email->value(),
       ':password' => $password->value(),
       ':phone' => $phone->value()
     ]);
@@ -82,9 +99,37 @@ final class UserRepository implements UserRepositoryInterface
   /**
    * Update will update user data in database
    * @param string $id
+   * @param Username $username
+   * @param Email $email
+   * @param Password $password
+   * @param Phone $phone
    */
-  public function update(string $id): void
+  public function update(
+    string $id,
+    Username $username,
+    Email $email,
+    Password $password,
+    Phone $phone
+  ): void
   {
+    $sql = $this->conn->prepare(
+      "UPDATE 
+          user 
+        SET
+          username = :username,
+          email = :email,
+          password = :password,
+          phone = :phone
+        WHERE
+          id = :id"
+    );
+    $sql->execute([
+      ':username' => $username->value(),
+      ':email' => $email->value(),
+      ':password' => $password->value(),
+      ':phone' => $phone->value(),
+      ':id' => $id
+    ]);
   }
 
   /**
@@ -93,5 +138,15 @@ final class UserRepository implements UserRepositoryInterface
    */
   public function delete(string $id): void
   {
+    try {
+      $sql = $this->conn->prepare(
+        "DELETE FROM user WHERE id = :id"
+      );
+      $sql->execute([
+        ':id' => $id
+      ]);
+    } catch (Exception $th) {
+      throw new Exception("Delete user error " . $th->getMessage());
+    }
   }
 }
